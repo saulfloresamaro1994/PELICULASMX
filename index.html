@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PELICULASMX - Ver Películas Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Estilos para el login */
         .login-overlay {
@@ -109,6 +110,118 @@
             color: #0066ff;
             font-weight: bold;
             margin-bottom: 10px;
+        }
+        
+        /* Estilos para el slider */
+        .hero {
+            height: 70vh;
+            margin-bottom: 30px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            position: relative;
+            transition: background-image 0.8s ease-in-out;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 100, 255, 0.3);
+        }
+
+        .hero-content {
+            width: 100%;
+            z-index: 2;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn-primary {
+            background: #0066ff;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #0055cc;
+            box-shadow: 0 0 20px rgba(0, 100, 255, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .hero-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 3;
+        }
+        
+        .hero-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .hero-dot.active {
+            background: #0066ff;
+            transform: scale(1.2);
+        }
+        
+        .hero-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .hero-nav-btn:hover {
+            background: #0066ff;
+        }
+        
+        .hero-prev {
+            left: 20px;
+        }
+        
+        .hero-next {
+            right: 20px;
         }
         
         .player-container {
@@ -332,6 +445,22 @@
         }
         
         @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .hero-nav-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+            }
+            
             .movie-meta span {
                 margin-bottom: 5px;
                 display: block;
@@ -374,6 +503,22 @@
                 max-height: 45vh;
             }
         }
+
+        @media (max-width: 576px) {
+            .hero {
+                height: 60vh;
+                justify-content: center;
+            }
+            
+            .hero-title {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+
+            .hero-nav-btn {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -403,6 +548,27 @@
             <div>Estrenos y mucho mas</div>
         </div>
         
+        <!-- Hero Section con Slider -->
+        <section class="hero" id="heroSection">
+            <div class="hero-content">
+                <h1 class="hero-title" id="heroMovieTitle">Disfruta del mejor cine</h1>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" id="heroPlayBtn">
+                        <i class="fas fa-play"></i> Ver ahora
+                    </button>
+                </div>
+            </div>
+            
+            <button class="hero-nav-btn hero-prev" id="heroPrevBtn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="hero-nav-btn hero-next" id="heroNextBtn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <div class="hero-controls" id="heroDots"></div>
+        </section>
+        
         <div class="player-container" id="playerContainer">
             <div class="close-player" id="closePlayer">×</div>
             
@@ -428,36 +594,8 @@
         </div>
         
         <div class="trilogy-container">
-            <h3 class="trilogy-title">PELÍCULAS POPULARES</h3>
-            <div class="movies-carousel" id="popularMoviesCarousel">
-                <!-- Las películas se agregarán aquí dinámicamente -->
-            </div>
-        </div>
-        
-        <div class="trilogy-container">
-            <h3 class="trilogy-title">PELÍCULAS DE ACCIÓN</h3>
-            <div class="movies-carousel" id="actionMoviesCarousel">
-                <!-- Las películas se agregarán aquí dinámicamente -->
-            </div>
-        </div>
-        
-        <div class="trilogy-container">
-            <h3 class="trilogy-title">PELÍCULAS DE TERROR</h3>
-            <div class="movies-carousel" id="horrorMoviesCarousel">
-                <!-- Las películas se agregarán aquí dinámicamente -->
-            </div>
-        </div>
-        
-        <div class="trilogy-container">
-            <h3 class="trilogy-title">PELÍCULAS DE ANIMACIÓN</h3>
-            <div class="movies-carousel" id="animationMoviesCarousel">
-                <!-- Las películas se agregarán aquí dinámicamente -->
-            </div>
-        </div>
-        
-        <div class="trilogy-container">
-            <h3 class="trilogy-title">PELÍCULAS DE COMEDIA</h3>
-            <div class="movies-carousel" id="comedyMoviesCarousel">
+            <h3 class="trilogy-title">PELÍCULAS RECIÉN AGREGADAS</h3>
+            <div class="movies-carousel" id="recentMoviesCarousel">
                 <!-- Las películas se agregarán aquí dinámicamente -->
             </div>
         </div>
@@ -542,157 +680,184 @@
                     active: false,
                     category: "estrenos"
                 },
-                
-                // POPULARES
                 {
                     title: "Criaturas Línea de extinción",
                     year: 2024,
                     videoUrl: "https://www.dropbox.com/scl/fi/iyr7tlsskue7a2o44k80a/Elevation-2024.mp4?rlkey=iisyj85pf8nsb9t9ns3g3a0vc&st=hcsepb2q&dl=1",
                     active: false,
-                    category: "populares"
+                    category: "estrenos"
                 },
                 {
                     title: "Sonic 3 La Película",
                     year: 2024,
                     videoUrl: "https://www.dropbox.com/scl/fi/ouwll073jd0ict6m6t6ru/Sonic-3-La-Pel-cula-2024.mkv?rlkey=p737r3mid3xugl7v6hc884efm&st=aolmpsxk&dl=1",
                     active: false,
-                    category: "populares"
+                    category: "estrenos"
                 },
+                
+                // RECIENTES
                 {
                     title: "Damsel",
                     year: 2024,
                     videoUrl: "https://www.dropbox.com/scl/fi/o7huu2fdzykisgehenoww/Damsel-2024.mp4?rlkey=e3dfa1wzds80p2eowarjo8ymd&st=62q34sqy&dl=1",
                     active: false,
-                    category: "populares"
+                    category: "recientes"
                 },
                 {
                     title: "Mufasa El Rey León",
                     year: 2024,
                     videoUrl: "https://www.dropbox.com/scl/fi/p56ep0fy4tmprcsve7s1m/Mufasa-El-Rey-Le-n-2024.mp4?rlkey=tuv7aoq074ygryiy4j9rk7djp&st=ymtz6ljd&dl=1",
                     active: false,
-                    category: "populares"
-                },
-                
-                // ACCIÓN
-                {
-                    title: "John Wick 4",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example1/John-Wick-4.mp4?rlkey=example1&dl=1",
-                    active: false,
-                    category: "accion"
-                },
-                {
-                    title: "Misión Imposible 7",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example2/Mision-Imposible-7.mp4?rlkey=example2&dl=1",
-                    active: false,
-                    category: "accion"
-                },
-                {
-                    title: "The Equalizer 3",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example3/Equalizer-3.mp4?rlkey=example3&dl=1",
-                    active: false,
-                    category: "accion"
-                },
-                {
-                    title: "Fast X",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example4/Fast-X.mp4?rlkey=example4&dl=1",
-                    active: false,
-                    category: "accion"
-                },
-                
-                // TERROR
-                {
-                    title: "The Nun II",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example5/Nun-2.mp4?rlkey=example5&dl=1",
-                    active: false,
-                    category: "terror"
-                },
-                {
-                    title: "Talk to Me",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example6/Talk-to-Me.mp4?rlkey=example6&dl=1",
-                    active: false,
-                    category: "terror"
-                },
-                {
-                    title: "Evil Dead Rise",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example7/Evil-Dead-Rise.mp4?rlkey=example7&dl=1",
-                    active: false,
-                    category: "terror"
-                },
-                {
-                    title: "Smile",
-                    year: 2022,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example8/Smile.mp4?rlkey=example8&dl=1",
-                    active: false,
-                    category: "terror"
-                },
-                
-                // ANIMACIÓN
-                {
-                    title: "Spider-Man: Across the Spider-Verse",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example9/Spider-Verse-2.mp4?rlkey=example9&dl=1",
-                    active: false,
-                    category: "animacion"
-                },
-                {
-                    title: "Elemental",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example10/Elemental.mp4?rlkey=example10&dl=1",
-                    active: false,
-                    category: "animacion"
-                },
-                {
-                    title: "Super Mario Bros: La Película",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example11/Super-Mario.mp4?rlkey=example11&dl=1",
-                    active: false,
-                    category: "animacion"
-                },
-                {
-                    title: "Pinocho de Guillermo del Toro",
-                    year: 2022,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example12/Pinocho.mp4?rlkey=example12&dl=1",
-                    active: false,
-                    category: "animacion"
-                },
-                
-                // COMEDIA
-                {
-                    title: "Barbie",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example13/Barbie.mp4?rlkey=example13&dl=1",
-                    active: false,
-                    category: "comedia"
-                },
-                {
-                    title: "No Hard Feelings",
-                    year: 2023,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example14/No-Hard-Feelings.mp4?rlkey=example14&dl=1",
-                    active: false,
-                    category: "comedia"
-                },
-                {
-                    title: "Los tipos malos",
-                    year: 2022,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example15/Los-tipos-malos.mp4?rlkey=example15&dl=1",
-                    active: false,
-                    category: "comedia"
-                },
-                {
-                    title: "Free Guy",
-                    year: 2021,
-                    videoUrl: "https://www.dropbox.com/scl/fi/example16/Free-Guy.mp4?rlkey=example16&dl=1",
-                    active: false,
-                    category: "comedia"
+                    category: "recientes"
                 }
             ];
+            
+            // Configuración del slider hero - Tomamos solo las primeras 5 películas de estrenos
+            const heroMovies = movies
+                .filter(movie => movie.category === "estrenos")
+                .slice(0, 5); // Solo las primeras 5
+            
+            // Variables de estado para el slider
+            let currentHeroIndex = 0;
+            let heroInterval = null;
+            let isHoveringHero = false;
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            // Inicialización del slider
+            function startHeroSlider() {
+                if (heroInterval) clearInterval(heroInterval);
+                
+                const dotsContainer = document.getElementById('heroDots');
+                dotsContainer.innerHTML = '';
+                
+                heroMovies.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.className = `hero-dot ${index === currentHeroIndex ? 'active' : ''}`;
+                    dot.addEventListener('click', () => {
+                        currentHeroIndex = index;
+                        updateHeroSection(currentHeroIndex);
+                        resetHeroTimer();
+                    });
+                    dotsContainer.appendChild(dot);
+                });
+                
+                document.getElementById('heroPrevBtn').addEventListener('click', () => {
+                    currentHeroIndex = (currentHeroIndex - 1 + heroMovies.length) % heroMovies.length;
+                    updateHeroSection(currentHeroIndex);
+                    resetHeroTimer();
+                });
+                
+                document.getElementById('heroNextBtn').addEventListener('click', () => {
+                    currentHeroIndex = (currentHeroIndex + 1) % heroMovies.length;
+                    updateHeroSection(currentHeroIndex);
+                    resetHeroTimer();
+                });
+                
+                const heroSection = document.getElementById('heroSection');
+                heroSection.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, false);
+                
+                heroSection.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                }, false);
+                
+                heroSection.addEventListener('mouseenter', () => {
+                    isHoveringHero = true;
+                    clearInterval(heroInterval);
+                });
+                
+                heroSection.addEventListener('mouseleave', () => {
+                    isHoveringHero = false;
+                    resetHeroTimer();
+                });
+                
+                updateHeroSection(currentHeroIndex);
+                resetHeroTimer();
+            }
+
+            function updateHeroSection(index) {
+                if (heroMovies.length === 0) return;
+                
+                const movie = heroMovies[index];
+                const heroSection = document.getElementById('heroSection');
+                
+                // Configurar imagen de fondo con placeholder
+                heroSection.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('https://via.placeholder.com/1280x720/1a3a6e/ffffff?text=${encodeURIComponent(movie.title)}')`;
+                
+                // Mostrar solo el título
+                document.getElementById('heroMovieTitle').textContent = movie.title;
+                
+                // Actualizar puntos de navegación
+                document.querySelectorAll('.hero-dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+
+                // Cargar imagen real de la película si está disponible
+                fetchMoviePosterForSlider(movie.title, movie.year);
+            }
+
+            // Función para cargar el poster de fondo del slider
+            async function fetchMoviePosterForSlider(title, year) {
+                try {
+                    const apiKey = '04c35731a5ee918f014970082a0088b1';
+                    const searchUrl = year 
+                        ? `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(title)}&year=${year}`
+                        : `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(title)}`;
+                    
+                    const searchResponse = await fetch(searchUrl);
+                    const searchData = await searchResponse.json();
+                    
+                    if (searchResponse.ok && searchData.results.length > 0) {
+                        const backdropPath = searchData.results[0].backdrop_path;
+                        if (backdropPath) {
+                            const heroSection = document.getElementById('heroSection');
+                            heroSection.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('https://image.tmdb.org/t/p/original${backdropPath}')`;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error al cargar imagen para el slider:', error);
+                }
+            }
+
+            function handleSwipe() {
+                const threshold = 50;
+                
+                if (touchStartX - touchEndX > threshold) {
+                    currentHeroIndex = (currentHeroIndex + 1) % heroMovies.length;
+                    updateHeroSection(currentHeroIndex);
+                } else if (touchEndX - touchStartX > threshold) {
+                    currentHeroIndex = (currentHeroIndex - 1 + heroMovies.length) % heroMovies.length;
+                    updateHeroSection(currentHeroIndex);
+                }
+                
+                resetHeroTimer();
+            }
+
+            function resetHeroTimer() {
+                if (heroInterval) clearInterval(heroInterval);
+                if (!isHoveringHero && heroMovies.length > 1) {
+                    heroInterval = setInterval(() => {
+                        currentHeroIndex = (currentHeroIndex + 1) % heroMovies.length;
+                        updateHeroSection(currentHeroIndex);
+                    }, 5000);
+                }
+            }
+
+            function playHeroMovie() {
+                const movie = heroMovies[currentHeroIndex];
+                if (movie) {
+                    fetchMovieInfo(movie.title, movie.year, movie.videoUrl);
+                }
+            }
+
+            // Configurar el botón de reproducción
+            document.getElementById('heroPlayBtn').addEventListener('click', playHeroMovie);
+            
+            // Iniciar el slider
+            startHeroSlider();
             
             // Configuración general
             const language = "es-ES";
@@ -703,11 +868,7 @@
             const movieInfoContainer = document.getElementById('movieInfo');
             const playerContainer = document.getElementById('playerContainer');
             const moviesCarousel = document.getElementById('moviesCarousel');
-            const popularMoviesCarousel = document.getElementById('popularMoviesCarousel');
-            const actionMoviesCarousel = document.getElementById('actionMoviesCarousel');
-            const horrorMoviesCarousel = document.getElementById('horrorMoviesCarousel');
-            const animationMoviesCarousel = document.getElementById('animationMoviesCarousel');
-            const comedyMoviesCarousel = document.getElementById('comedyMoviesCarousel');
+            const recentMoviesCarousel = document.getElementById('recentMoviesCarousel');
             const closePlayerBtn = document.getElementById('closePlayer');
             const playerOverlay = document.getElementById('playerOverlay');
             
@@ -874,18 +1035,10 @@
             
             // Inicializar los carruseles de películas
             const estrenos = movies.filter(movie => movie.category === "estrenos");
-            const populares = movies.filter(movie => movie.category === "populares");
-            const accion = movies.filter(movie => movie.category === "accion");
-            const terror = movies.filter(movie => movie.category === "terror");
-            const animacion = movies.filter(movie => movie.category === "animacion");
-            const comedia = movies.filter(movie => movie.category === "comedia");
+            const recientes = movies.filter(movie => movie.category === "recientes");
             
             createMoviesCarousel(moviesCarousel, estrenos);
-            createMoviesCarousel(popularMoviesCarousel, populares);
-            createMoviesCarousel(actionMoviesCarousel, accion);
-            createMoviesCarousel(horrorMoviesCarousel, terror);
-            createMoviesCarousel(animationMoviesCarousel, animacion);
-            createMoviesCarousel(comedyMoviesCarousel, comedia);
+            createMoviesCarousel(recentMoviesCarousel, recientes);
         }
     </script>
 </body>
